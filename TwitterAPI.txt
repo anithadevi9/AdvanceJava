@@ -1,0 +1,161 @@
+package tweet.twitterapi;
+
+import java.io.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.io.file;
+import twitter4j.Paging;
+import twitter4j.ResponseList;
+import twitter4j.Status;
+import twitter4j.TwitterFactory;
+import twitter4j.outh.AccessToken;
+import org.json.simple.JSONObject;
+
+public class grootan {
+
+	public static void main(String[] args) {
+		
+		// using get timeline getting past 5 days
+		
+		static int i=0;
+	    String[] a=new String[1000];
+	    String[] fin=new String[1000];
+	    String[] screenname=new String[1000];
+	    int[] tweetcount=new tweetcount[1000];
+	    String[] filenames=new String[10];
+	    int[] cnt=new int[10];
+	    int temp;
+	    String tmp;
+	    String tweet;
+	    
+	    static int k=0,j=0;
+	    
+	    //Retrieving last five days (dates)
+	    
+	    Calendar startdate = Calendar.getInstance();
+	    Calendar enddate= startdate.add(Calendar.DATE, -5);
+	    
+	    // To connect to twitter API
+	    
+	    ConfigurationBuilder cb = new ConfigurationBuilder();
+	    cb.setDebugEnabled(true)
+	      .setOAuthConsumerKey("xxxxxxxxxxxxxxxxxx")
+	      .setOAuthConsumerSecret("xxxxxxxxxxxxxxxxxx")
+	      .setOAuthAccessToken("xxxxxxxxxxxxxxxxxxxxxx")
+	      .setOAuthAccessTokenSecret("xxxxxxxxxxxxxxxxxxxx");
+	    TwitterFactory tf = new TwitterFactory(cb.build().getInstance());
+	   
+		 //To get data of last five days
+	    
+	     Twitter twitter = TwitterFactory.getSingleton();
+		   
+		 List<Status> statuses = twitter.getHomeTimeline(new paging(1,500));
+		    
+		 System.out.println("Showing latest data");
+		   
+		 if(statuses.getCreatedAt()>=enddate)
+		 {
+		 for (Status status : statuses)
+		    {
+		    	System.out.println(status.getUser().ScreenName() + ":" + status.getText());
+		    	
+		    	//An array to store the text
+		    	
+		    	a[i]=status.gettext();
+		    	
+		    	//Checking for the word corona and storing it in seperate array
+		    	
+		    	if(a[i].contains("Corona"))
+		    	{
+		    		fin[k]=a[i];
+		    		screenname[k]=status.getUser().ScreenName();
+		    		k++;
+		    	}
+		    	i++;                  
+		    }
+		 }
+		 //To get Retweet Count for the selected tweets
+		 
+		try
+		{
+			for(Status statusItem:fin)
+			{
+				count[j]=statusItem.getRetweetCount());
+				j++;
+			}
+		}
+		catch(TwitterException ex)
+		{
+			System.out.print("check your tweets containing corona word properly");
+		}
+		 
+		//Sorting according to retweets count to retrieve first ten records
+		
+		for(int z=0;z<count.length;z++)
+		{
+			for(int x=z+1;x<count.length;x++)
+			{
+				if(count[z]>count[x])
+				{
+					temp=count[z];
+					count[z]=count[x];
+					count[x]=temp;
+					
+					tmp=screenname[z];
+					screenname[z]=screenname[x];
+					screenname[x]=tmp;
+					
+					tweet=fin[z];
+					fin[z]=fin[x];
+					fin[x]=tweet;
+				}
+			}
+		}
+		for(int u=0;u<10;u++)
+		{
+			filename[i]=screenname[i];
+			cnt[i]=count[i];
+		}
+		 //Store Ten Datas in json File
+		
+		for(int i=0<10;i++)
+		{
+			 jsonObject.put(filenames[i], cnt[i]);
+		}
+		 try {
+	         FileWriter file = new FileWriter("F:\\Retweets.json");
+	         file.write(jsonObject.toJSONString());
+	        
+	         file.close();
+	      } catch (IOException e) {
+	         e.printStackTrace();
+	      }
+		
+		//To check Weather the language is English
+		 
+		 HashtagEntity[] hashtagEntities = status.getHashtagEntities();
+		 for(int y=0;y<10;y++)
+		 {
+		 language = detect(fin[i]);
+		 if(language!="EN")
+		 {
+			 for (int i = 1; i < hashtagEntities.length; i++) {
+			      s.append(",");
+			      s.append(hashtagEntities[i].getText());
+			    } 
+			 jsonObject.put(filenames[i],getCreatedAt());
+			 try {
+		         FileWriter file = new FileWriter("F:\\nonenglishtweets.json");
+		         file.write(jsonObject.toJSONString());
+		        
+		         file.close();
+		      } catch (IOException e) {
+		         e.printStackTrace();
+		      }
+		 }
+			 
+		 } 
+		
+	}
+
+}
